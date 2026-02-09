@@ -41,8 +41,24 @@ export const Products: CollectionConfig = {
   },
   fields: [
     {
+      name: 'type',
+      label: 'Тип товара',
+      type: 'select',
+      required: true,
+      defaultValue: 'stickers',
+      options: [
+        { label: 'Наклейки', value: 'stickers' },
+        { label: 'Ароматизаторы', value: 'flavours' },
+        { label: 'Одежда', value: 'merch' },
+        { label: 'Номерные рамки', value: 'frames' },
+      ],
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'active',
-      label: 'Активен',
+      label: 'Опубликовать',
       type: 'checkbox',
       defaultValue: false,
       required: true,
@@ -237,9 +253,72 @@ export const Products: CollectionConfig = {
       },
     },
 
+    //GET /api/products/stickers
+    //GET /api/products/flavour
+    //GET /api/products/merch
+    //GET /api/products/frames
+    {
+      path: '/:type',
+      method: 'get',
+      handler: async (req) => {
+        const type = req.routeParams?.type as string | undefined;
+
+        if (!type || !['stickers', 'flavours', 'merch', 'frames'].includes(type)) {
+          return Response.json(
+            { message: 'Неизвестный тип товара' },
+            { status: 404 },
+          );
+        }
+
+        // @ts-ignore
+        const url = new URL(req.url);
+
+        const inStock = url.searchParams.get('inStock');
+        const priceFrom = url.searchParams.get('priceFrom');
+        const priceTo = url.searchParams.get('priceTo');
+
+        const where: any = {
+          active: { equals: true },
+          type: { equals: type },
+        };
+
+        if (inStock === 'true') where.inStock = { equals: true };
+        if (inStock === 'false') where.inStock = { equals: false };
+
+        if (priceFrom || priceTo) {
+          where['pricing.price'] = {};
+
+          if (priceFrom) {
+            where['pricing.price'].greater_than_equal = Number(priceFrom);
+          }
+
+          if (priceTo) {
+            where['pricing.price'].less_than_equal = Number(priceTo);
+          }
+        }
+
+        const products = await req.payload.find({
+          collection: 'products',
+          where,
+          depth: 2,
+          limit: 1000,
+          sort: '-createdAt',
+        });
+
+        return Response.json(
+          {
+            type,
+            docs: products.docs,
+            total: products.totalDocs,
+          },
+          { status: 200 },
+        );
+      },
+    },
+
     // GET /api/products/by-slug/tovar-2
     {
-      path: '/:slug',
+      path: '/i/:slug',
       method: 'get',
       handler: async (req) => {
         const slug = req.routeParams?.slug as string | undefined
