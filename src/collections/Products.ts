@@ -254,7 +254,7 @@ export const Products: CollectionConfig = {
     },
 
     //GET /api/products/stickers
-    //GET /api/products/flavour
+    //GET /api/products/flavours
     //GET /api/products/merch
     //GET /api/products/frames
     {
@@ -316,7 +316,7 @@ export const Products: CollectionConfig = {
       },
     },
 
-    // GET /api/products/by-slug/tovar-2
+    // GET /api/products/i/tovar-2
     {
       path: '/i/:slug',
       method: 'get',
