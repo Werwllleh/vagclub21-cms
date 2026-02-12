@@ -41,6 +41,22 @@ export const Products: CollectionConfig = {
   },
   fields: [
     {
+      name: 'mark',
+      label: 'Значок',
+      type: 'select',
+      required: false,
+      defaultValue: 'none',
+      options: [
+        { label: 'Ничего', value: 'none' },
+        { label: 'Хит', value: 'popular' },
+        { label: 'Новинка', value: 'new' },
+        { label: 'Распродажа', value: 'sale' },
+      ],
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'type',
       label: 'Тип товара',
       type: 'select',
@@ -79,11 +95,13 @@ export const Products: CollectionConfig = {
     },
     {
       name: 'name',
+      label: 'Название',
       type: 'text',
       required: true,
     },
     {
       name: 'slug',
+      label: 'Символьная ссылка',
       type: 'text',
       unique: true,
       index: true,

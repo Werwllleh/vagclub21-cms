@@ -167,6 +167,7 @@ export interface Media {
  */
 export interface Product {
   id: number;
+  mark?: ('none' | 'popular' | 'new' | 'sale') | null;
   type: 'stickers' | 'flavours' | 'merch' | 'frames';
   /**
    * Если выключено — товар не будет возвращаться в API для публичного доступа
@@ -350,6 +351,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
+  mark?: T;
   type?: T;
   active?: T;
   inStock?: T;
