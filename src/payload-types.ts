@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     products: Product;
+    hero_slider: HeroSlider;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    hero_slider: HeroSliderSelect<false> | HeroSliderSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -230,6 +232,37 @@ export interface Product {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero_slider".
+ */
+export interface HeroSlider {
+  id: number;
+  title: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  detail_link?: string | null;
+  /**
+   * Если выключено — товар не будет возвращаться в API для публичного доступа
+   */
+  active: boolean;
+  bg_image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -263,6 +296,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'hero_slider';
+        value: number | HeroSlider;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -386,6 +423,19 @@ export interface ProductsSelect<T extends boolean = true> {
         title?: T;
         description?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero_slider_select".
+ */
+export interface HeroSliderSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  detail_link?: T;
+  active?: T;
+  bg_image?: T;
   updatedAt?: T;
   createdAt?: T;
 }
