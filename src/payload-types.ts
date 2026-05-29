@@ -91,8 +91,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    meet: Meet;
+  };
+  globalsSelect: {
+    meet: MeetSelect<false> | MeetSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -480,6 +484,63 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "meet".
+ */
+export interface Meet {
+  id: number;
+  title: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  address?: string | null;
+  date: string;
+  date_tz: SupportedTimezones;
+  /**
+   * Если выключено — событие не будет возвращаться в API для публичного доступа
+   */
+  active: boolean;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "meet_select".
+ */
+export interface MeetSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  coordinates?:
+    | T
+    | {
+        lat?: T;
+        lng?: T;
+      };
+  address?: T;
+  date?: T;
+  date_tz?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
