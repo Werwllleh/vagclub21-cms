@@ -40,6 +40,12 @@ export const Meet: GlobalConfig = {
       name: 'address',
       label: 'Адрес текстом',
       type: 'text',
+      required: true,
+    },
+    {
+      name: 'address_link',
+      label: 'Ссылка на точку',
+      type: 'text',
     },
     {
       name: 'date',

@@ -636,7 +636,8 @@ export interface Meet {
     lat: number;
     lng: number;
   };
-  address?: string | null;
+  address: string;
+  address_link?: string | null;
   date: string;
   date_tz: SupportedTimezones;
   /**
@@ -660,6 +661,7 @@ export interface MeetSelect<T extends boolean = true> {
         lng?: T;
       };
   address?: T;
+  address_link?: T;
   date?: T;
   date_tz?: T;
   active?: T;
