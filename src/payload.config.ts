@@ -10,6 +10,8 @@ import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import {HeroSlider} from "@/collections/HeroSlider";
 import { Meet } from '@/globals/Meet/config'
+import { Partner } from '@/collections/Partner'
+import { PartnerCategory } from '@/collections/PartnerCategory'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,7 +32,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Products, HeroSlider],
+  collections: [Users, Media, Products, HeroSlider, Partner, PartnerCategory],
   globals: [Meet],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

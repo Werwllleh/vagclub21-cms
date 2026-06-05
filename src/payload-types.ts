@@ -71,6 +71,8 @@ export interface Config {
     media: Media;
     products: Product;
     hero_slider: HeroSlider;
+    partner: Partner;
+    partner_category: PartnerCategory;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +84,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     hero_slider: HeroSliderSelect<false> | HeroSliderSelect<true>;
+    partner: PartnerSelect<false> | PartnerSelect<true>;
+    partner_category: PartnerCategorySelect<false> | PartnerCategorySelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -269,6 +273,86 @@ export interface HeroSlider {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner".
+ */
+export interface Partner {
+  id: number;
+  /**
+   * Оставь пустым — сгенерируется из названия
+   */
+  slug: string;
+  /**
+   * Если выключено — партнер не будет возвращаться в API для публичного доступа
+   */
+  active: boolean;
+  /**
+   * Если проверенный — отметить
+   */
+  verified: boolean;
+  logo: number | Media;
+  /**
+   * Фото процесса работ партнера (желательно несколько)
+   */
+  gallery: (number | Media)[];
+  /**
+   * Название партнера
+   */
+  title: string;
+  /**
+   * Описание партнера (что продает/производит)
+   */
+  description: string;
+  categories: (number | PartnerCategory)[];
+  discount?:
+    | (
+        | '5'
+        | '10'
+        | '15'
+        | '20'
+        | '25'
+        | '30'
+        | '35'
+        | '40'
+        | '45'
+        | '50'
+        | '55'
+        | '60'
+        | '65'
+        | '70'
+        | '75'
+        | '80'
+        | '85'
+        | '90'
+        | '95'
+        | '100'
+      )
+    | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner_category".
+ */
+export interface PartnerCategory {
+  id: number;
+  /**
+   * Название категории на русском
+   */
+  title: string;
+  /**
+   * Автоматически генерируется из названия
+   */
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -306,6 +390,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'hero_slider';
         value: number | HeroSlider;
+      } | null)
+    | ({
+        relationTo: 'partner';
+        value: number | Partner;
+      } | null)
+    | ({
+        relationTo: 'partner_category';
+        value: number | PartnerCategory;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -442,6 +534,39 @@ export interface HeroSliderSelect<T extends boolean = true> {
   detail_link?: T;
   active?: T;
   bg_image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner_select".
+ */
+export interface PartnerSelect<T extends boolean = true> {
+  slug?: T;
+  active?: T;
+  verified?: T;
+  logo?: T;
+  gallery?: T;
+  title?: T;
+  description?: T;
+  categories?: T;
+  discount?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner_category_select".
+ */
+export interface PartnerCategorySelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

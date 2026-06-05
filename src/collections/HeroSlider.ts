@@ -5,7 +5,6 @@ export const HeroSlider: CollectionConfig = {
   access: { read: () => true },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'description', 'detail_link', 'active', 'bg_image', 'updatedAt'],
   },
   hooks: {},
   fields: [

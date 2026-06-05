@@ -1,33 +1,13 @@
 import {CollectionConfig, headersWithCors} from 'payload'
+import { slugify } from '@/lib/generateSlug'
 
-const translitMap: Record<string, string> = {
-  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd',
-  е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i',
-  й: 'y', к: 'k', л: 'l', м: 'm', н: 'n',
-  о: 'o', п: 'p', р: 'r', с: 's', т: 't',
-  у: 'u', ф: 'f', х: 'h', ц: 'c', ч: 'ch',
-  ш: 'sh', щ: 'shch', ы: 'y', э: 'e',
-  ю: 'yu', я: 'ya',
-  ь: '', ъ: '',
-}
 
-const slugify = (str: string) =>
-  str
-    .toLowerCase()
-    .trim()
-    .split('')
-    .map(char => translitMap[char] ?? char)
-    .join('')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
 
 export const Products: CollectionConfig = {
   slug: 'products',
   access: { read: () => true },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'slug', 'mainImage', 'pricing.price', 'pricing.oldPrice', 'updatedAt'],
   },
   hooks: {
     beforeValidate: [
