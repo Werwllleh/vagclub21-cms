@@ -1,7 +1,10 @@
 import {CollectionConfig, headersWithCors} from 'payload'
 
 export const HeroSlider: CollectionConfig = {
-  slug: "hero_slider",
+  slug: 'hero_slider',
+  labels: {
+    singular: 'Главный слайдер',
+  },
   access: { read: () => true },
   admin: {
     useAsTitle: 'title',
@@ -48,7 +51,6 @@ export const HeroSlider: CollectionConfig = {
       path: '/',
       method: 'get',
       handler: async (req) => {
-
         const where: any = {
           active: { equals: true },
         }
@@ -58,7 +60,7 @@ export const HeroSlider: CollectionConfig = {
           where,
           depth: 2,
           sort: '-createdAt',
-        });
+        })
 
         return Response.json(
           {
@@ -74,5 +76,5 @@ export const HeroSlider: CollectionConfig = {
         )
       },
     },
-  ]
+  ],
 }

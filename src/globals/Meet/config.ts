@@ -2,6 +2,7 @@ import { GlobalConfig, headersWithCors } from 'payload'
 
 export const Meet: GlobalConfig = {
   slug: 'meet',
+  label: 'Встреча клуба',
   access: {
     read: () => true,
   },

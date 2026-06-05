@@ -3,6 +3,10 @@ import { slugify } from '@/lib/generateSlug'
 
 export const Partner: CollectionConfig = {
   slug: 'partner',
+  labels: {
+    singular: 'Партнер',
+    plural: 'Партнеры',
+  },
   access: { read: () => true },
   admin: {
     useAsTitle: 'title',

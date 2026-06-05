@@ -5,13 +5,17 @@ import { slugify } from '@/lib/generateSlug'
 
 export const Products: CollectionConfig = {
   slug: 'products',
+  labels: {
+    singular: 'Товар',
+    plural: 'Товары',
+  },
   access: { read: () => true },
   admin: {
     useAsTitle: 'name',
   },
   hooks: {
     beforeValidate: [
-      ({data}) => {
+      ({ data }) => {
         if (data && !data.slug && data.name) {
           data.slug = slugify(String(data.name))
         }
@@ -117,7 +121,7 @@ export const Products: CollectionConfig = {
           type: 'number',
           required: true,
           min: 0,
-          admin: {step: 1},
+          admin: { step: 1 },
         },
         {
           name: 'oldPrice',
@@ -259,39 +263,36 @@ export const Products: CollectionConfig = {
       path: '/:type',
       method: 'get',
       handler: async (req) => {
-        const type = req.routeParams?.type as string | undefined;
+        const type = req.routeParams?.type as string | undefined
 
         if (!type || !['stickers', 'flavours', 'merch', 'frames'].includes(type)) {
-          return Response.json(
-            { message: 'Неизвестный тип товара' },
-            { status: 404 },
-          );
+          return Response.json({ message: 'Неизвестный тип товара' }, { status: 404 })
         }
 
         // @ts-ignore
-        const url = new URL(req.url);
+        const url = new URL(req.url)
 
-        const inStock = url.searchParams.get('inStock');
-        const priceFrom = url.searchParams.get('priceFrom');
-        const priceTo = url.searchParams.get('priceTo');
+        const inStock = url.searchParams.get('inStock')
+        const priceFrom = url.searchParams.get('priceFrom')
+        const priceTo = url.searchParams.get('priceTo')
 
         const where: any = {
           active: { equals: true },
           type: { equals: type },
-        };
+        }
 
-        if (inStock === 'true') where.inStock = { equals: true };
-        if (inStock === 'false') where.inStock = { equals: false };
+        if (inStock === 'true') where.inStock = { equals: true }
+        if (inStock === 'false') where.inStock = { equals: false }
 
         if (priceFrom || priceTo) {
-          where['pricing.price'] = {};
+          where['pricing.price'] = {}
 
           if (priceFrom) {
-            where['pricing.price'].greater_than_equal = Number(priceFrom);
+            where['pricing.price'].greater_than_equal = Number(priceFrom)
           }
 
           if (priceTo) {
-            where['pricing.price'].less_than_equal = Number(priceTo);
+            where['pricing.price'].less_than_equal = Number(priceTo)
           }
         }
 
@@ -301,7 +302,7 @@ export const Products: CollectionConfig = {
           depth: 2,
           limit: 1000,
           sort: '-createdAt',
-        });
+        })
 
         return Response.json(
           {
@@ -310,7 +311,7 @@ export const Products: CollectionConfig = {
             total: products.totalDocs,
           },
           { status: 200 },
-        );
+        )
       },
     },
 
@@ -322,10 +323,7 @@ export const Products: CollectionConfig = {
         const slug = req.routeParams?.slug as string | undefined
 
         if (!slug) {
-          return Response.json(
-            { message: 'Slug обязателен' },
-            { status: 400 },
-          )
+          return Response.json({ message: 'Slug обязателен' }, { status: 400 })
         }
 
         const result = await req.payload.find({
@@ -340,10 +338,7 @@ export const Products: CollectionConfig = {
         const product = result.docs?.[0]
 
         if (!product) {
-          return Response.json(
-            { message: 'Товар не найден' },
-            { status: 404 },
-          )
+          return Response.json({ message: 'Товар не найден' }, { status: 404 })
         }
 
         return Response.json(product, { status: 200 })

@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: 'Медиа',
+    plural: 'Медиа',
+  },
   access: {
     read: () => true,
   },
@@ -27,17 +31,17 @@ export const Media: CollectionConfig = {
 
     // 🔧 Основные параметры для всех загружаемых файлов
     formatOptions: {
-      format: 'webp',         // конвертация в webp
+      format: 'webp', // конвертация в webp
       options: {
-        quality: 80,          // сжатие без заметной потери качества
-        effort: 4,            // баланс скорость/качество (1–6)
+        quality: 80, // сжатие без заметной потери качества
+        effort: 4, // баланс скорость/качество (1–6)
         smartSubsample: true, // улучшает детализацию при ресайзе
       },
     },
 
     resizeOptions: {
       withoutEnlargement: true, // не увеличивать меньшее изображение
-      fit: 'inside',            // масштабировать, сохраняя пропорции
+      fit: 'inside', // масштабировать, сохраняя пропорции
       background: { r: 255, g: 255, b: 255, alpha: 1 },
     },
   },

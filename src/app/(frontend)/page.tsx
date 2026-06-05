@@ -27,8 +27,8 @@ export default async function HomePage() {
             width={65}
           />
         </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
+        {!user && <h1>VAGCLUB21</h1>}
+        {user && <h1>Добро пожаловать, {user.name}</h1>}
         <div className="links">
           <a
             className="admin"
@@ -36,7 +36,7 @@ export default async function HomePage() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Go to admin panel
+            Админ панель
           </a>
           <a
             className="docs"
@@ -44,15 +44,12 @@ export default async function HomePage() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Documentation
+            Документация
           </a>
         </div>
       </div>
       <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
+
       </div>
     </div>
   )
