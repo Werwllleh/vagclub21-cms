@@ -3,7 +3,8 @@ import {CollectionConfig, headersWithCors} from 'payload'
 export const HeroSlider: CollectionConfig = {
   slug: 'hero_slider',
   labels: {
-    singular: 'Главный слайдер',
+    singular: 'Cлайдер на главной',
+    plural: 'Cлайдер на главной',
   },
   access: { read: () => true },
   admin: {

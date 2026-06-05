@@ -12,20 +12,19 @@ import {HeroSlider} from "@/collections/HeroSlider";
 import { Meet } from '@/globals/Meet/config'
 import { Partner } from '@/collections/Partner'
 import { PartnerCategory } from '@/collections/PartnerCategory'
+import { en } from '@payloadcms/translations/languages/en'
+import { ru } from '@payloadcms/translations/languages/ru'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
   serverURL: process.env.CMS_URL,
-  cors: [
-    String(process.env.SERVER_URL),
-    String(process.env.CMS_URL),
-  ],
-  csrf: [
-    String(process.env.SERVER_URL),
-    String(process.env.CMS_URL),
-  ],
+  cors: [String(process.env.SERVER_URL), String(process.env.CMS_URL)],
+  csrf: [String(process.env.SERVER_URL), String(process.env.CMS_URL)],
+  i18n: {
+    supportedLanguages: { en, ru },
+  },
   admin: {
     user: Users.slug,
     importMap: {
