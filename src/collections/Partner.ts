@@ -1,5 +1,7 @@
 import { CollectionConfig, headersWithCors } from 'payload'
 import { slugify } from '@/lib/generateSlug'
+import { types } from 'sass'
+import Boolean = types.Boolean
 
 export const Partner: CollectionConfig = {
   slug: 'partner',
@@ -34,8 +36,6 @@ export const Partner: CollectionConfig = {
       index: true,
       admin: {
         description: 'Оставь пустым — сгенерируется из названия',
-        readOnly: true,
-        hidden: true,
       },
     },
     {
@@ -46,46 +46,53 @@ export const Partner: CollectionConfig = {
       required: true,
       admin: {
         position: 'sidebar',
-        description: 'Если выключено — партнер не будет возвращаться в API для публичного доступа',
+        description: 'Если выключено — компания не будет возвращаться в API для публичного доступа',
       },
     },
     {
-      name: 'verified',
-      label: 'Проверенный партнер',
+      name: 'blacklist',
+      label: 'Компания в ЧС',
       type: 'checkbox',
       defaultValue: false,
       required: true,
       admin: {
         position: 'sidebar',
-        description: 'Если проверенный — отметить',
+        description: 'Если включено — компания будет в ЧС',
+      },
+    },
+    {
+      name: 'verified',
+      label: 'Проверенная компания',
+      type: 'checkbox',
+      defaultValue: false,
+      required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Если проверенная — отметить',
       },
     },
     {
       name: 'logo',
-      label: 'Логотип партнера',
+      label: 'Логотип компании',
       type: 'relationship',
-      relationTo: 'media',
+      relationTo: 'media_partners',
       required: true,
     },
     {
       name: 'gallery',
       label: 'Галерея',
       type: 'relationship',
-      relationTo: 'media',
+      relationTo: 'media_partners',
       hasMany: true,
-      required: true,
       admin: {
-        description: 'Фото процесса работ партнера (желательно несколько)',
+        description: 'Фото процесса работ компании (желательно несколько)',
       },
     },
     {
       name: 'title',
-      label: 'Название',
+      label: 'Название компании',
       type: 'text',
       required: true,
-      admin: {
-        description: 'Название партнера',
-      },
     },
     {
       name: 'description',
@@ -97,16 +104,24 @@ export const Partner: CollectionConfig = {
       },
     },
     {
+      name: 'address',
+      label: 'Адрес компании',
+      type: 'text',
+    },
+    {
       name: 'categories',
       label: 'Категории',
       type: 'relationship',
       relationTo: 'partner_category',
       hasMany: true,
       required: true,
+      admin: {
+        description: 'Выбрать категории принадлежащие компании',
+      },
     },
     {
       name: 'discount',
-      label: 'Максимальная скидка',
+      label: 'Размер скидки',
       type: 'select',
       options: [
         { label: '5', value: '5' },
@@ -130,6 +145,90 @@ export const Partner: CollectionConfig = {
         { label: '95', value: '95' },
         { label: '100', value: '100' },
       ],
+      admin: {
+        description: 'Размер скидки для клубных пользователей',
+      },
+    },
+    {
+      type: 'group',
+      name: 'contacts',
+      label: 'Контакты',
+      fields: [
+        {
+          name: 'instagram',
+          label: 'Instagram',
+          type: 'text',
+          admin: {
+            description: 'Ссылка на Instagram',
+          },
+        },
+        {
+          name: 'telegram',
+          label: 'Telegram',
+          type: 'text',
+          admin: {
+            description: 'Ссылка на Telegram',
+          },
+        },
+        {
+          name: 'max',
+          label: 'MAX',
+          type: 'text',
+          admin: {
+            description: 'Ссылка на MAX',
+          },
+        },
+        {
+          name: 'vk',
+          label: 'VK',
+          type: 'text',
+          admin: {
+            description: 'Ссылка на VK',
+          },
+        },
+        {
+          name: 'phones',
+          label: 'Телефоны',
+          type: 'array',
+          fields: [
+            {
+              name: 'phone',
+              label: 'Телефон',
+              type: 'text',
+              required: true,
+            },
+          ],
+        },
+        {
+          name: 'emails',
+          label: 'Email',
+          type: 'array',
+          fields: [
+            {
+              name: 'email',
+              label: 'Email',
+              type: 'email',
+              required: true,
+            },
+          ],
+        },
+        {
+          name: 'site',
+          label: 'Сайт компании',
+          type: 'text',
+          admin: {
+            description: 'Ссылка на сайт компании',
+          },
+        },
+        {
+          name: 'yandexMaps',
+          label: 'Профиль в Яндекс Картах',
+          type: 'text',
+          admin: {
+            description: 'Ссылка на профиль организации в Яндекс Картах',
+          },
+        },
+      ],
     },
     {
       type: 'group',
@@ -150,46 +249,79 @@ export const Partner: CollectionConfig = {
     },
   ],
   endpoints: [
-    // GET /api/products/list?inStock=true&priceFrom=100&priceTo=500
+    // GET /api/partner/c?page=1&verified=true&categories=avtoservis,chip-tyuning
     {
-      path: '/list',
+      path: '/c',
       method: 'get',
       handler: async (req) => {
         // @ts-ignore
         const url = new URL(req.url)
 
-        const inStock = url.searchParams.get('inStock') // 'true' | 'false' | null
-        const priceFrom = url.searchParams.get('priceFrom')
-        const priceTo = url.searchParams.get('priceTo')
+        const pageParam = Number(url.searchParams.get('page'))
+        const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1
+
+        const verified = url.searchParams.get('verified') === 'true'
+        const blockedStatus = url.searchParams.get('blacklist') === 'true'
+        const categoriesParams = url.searchParams.get('categories')
+        const categorySlugs = categoriesParams?.split(',') || []
 
         const where: any = {
-          active: { equals: true },
+          active: {
+            equals: true,
+          },
+          blacklist: {
+            equals: blockedStatus,
+          }
         }
 
-        // фильтр по наличию
-        if (inStock === 'true') where.inStock = { equals: true }
-        if (inStock === 'false') where.inStock = { equals: false }
-
-        // фильтр по цене (актуальная цена pricing.price)
-        if (priceFrom || priceTo) {
-          where['pricing.price'] = {}
-
-          if (priceFrom) where['pricing.price'].greater_than_equal = Number(priceFrom)
-          if (priceTo) where['pricing.price'].less_than_equal = Number(priceTo)
+        if (verified) {
+          where.verified = {
+            equals: true,
+          }
         }
 
-        const products = await req.payload.find({
-          collection: 'products',
+        let categoryIds: number[] = []
+
+        if (!!categorySlugs.length) {
+          const foundCategories = await req.payload.find({
+            collection: 'partner_category',
+            where: {
+              slug: {
+                in: categorySlugs,
+              },
+            },
+          })
+
+          categoryIds = foundCategories.docs.map((item) => item.id)
+        }
+
+        if (categoryIds.length) {
+          where.categories = {
+            in: categoryIds,
+          }
+        }
+
+        const partners = await req.payload.find({
+          collection: 'partner',
           where,
-          depth: 2,
-          limit: 1000,
+          select: {
+            blacklist: false,
+            active: false,
+            updatedAt: false,
+            createdAt: false,
+          },
+          depth: 1,
+          page,
+          limit: 1,
           sort: '-createdAt',
         })
 
         return Response.json(
           {
-            docs: products.docs,
-            total: products.totalDocs,
+            partners: partners.docs,
+            hasNextPage: partners.hasNextPage,
+            totalPages: partners.totalPages,
+            totalCount: partners.totalDocs,
           },
           {
             status: 200,
@@ -202,69 +334,9 @@ export const Partner: CollectionConfig = {
       },
     },
 
-    //GET /api/products/stickers
-    //GET /api/products/flavours
-    //GET /api/products/merch
-    //GET /api/products/frames
+    // GET /api/partner/c/:slug
     {
-      path: '/:type',
-      method: 'get',
-      handler: async (req) => {
-        const type = req.routeParams?.type as string | undefined
-
-        if (!type || !['stickers', 'flavours', 'merch', 'frames'].includes(type)) {
-          return Response.json({ message: 'Неизвестный тип товара' }, { status: 404 })
-        }
-
-        // @ts-ignore
-        const url = new URL(req.url)
-
-        const inStock = url.searchParams.get('inStock')
-        const priceFrom = url.searchParams.get('priceFrom')
-        const priceTo = url.searchParams.get('priceTo')
-
-        const where: any = {
-          active: { equals: true },
-          type: { equals: type },
-        }
-
-        if (inStock === 'true') where.inStock = { equals: true }
-        if (inStock === 'false') where.inStock = { equals: false }
-
-        if (priceFrom || priceTo) {
-          where['pricing.price'] = {}
-
-          if (priceFrom) {
-            where['pricing.price'].greater_than_equal = Number(priceFrom)
-          }
-
-          if (priceTo) {
-            where['pricing.price'].less_than_equal = Number(priceTo)
-          }
-        }
-
-        const products = await req.payload.find({
-          collection: 'products',
-          where,
-          depth: 2,
-          limit: 1000,
-          sort: '-createdAt',
-        })
-
-        return Response.json(
-          {
-            type,
-            docs: products.docs,
-            total: products.totalDocs,
-          },
-          { status: 200 },
-        )
-      },
-    },
-
-    // GET /api/products/i/tovar-2
-    {
-      path: '/i/:slug',
+      path: '/c:slug',
       method: 'get',
       handler: async (req) => {
         const slug = req.routeParams?.slug as string | undefined
@@ -274,21 +346,26 @@ export const Partner: CollectionConfig = {
         }
 
         const result = await req.payload.find({
-          collection: 'products',
+          collection: 'partner',
           where: {
             and: [{ slug: { equals: slug } }, { active: { equals: true } }],
           },
+          select: {
+            active: false,
+            updatedAt: false,
+            createdAt: false,
+          },
           limit: 1,
-          depth: 2,
+          depth: 1,
         })
 
-        const product = result.docs?.[0]
+        const partner = result.docs[0]
 
-        if (!product) {
-          return Response.json({ message: 'Товар не найден' }, { status: 404 })
+        if (!partner) {
+          return Response.json({ message: 'Компания не найдена' }, { status: 404 })
         }
 
-        return Response.json(product, { status: 200 })
+        return Response.json(partner, { status: 200 })
       },
     },
   ],

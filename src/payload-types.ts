@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    media_partners: MediaPartner;
     products: Product;
     hero_slider: HeroSlider;
     partner: Partner;
@@ -82,6 +83,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    media_partners: MediaPartnersSelect<false> | MediaPartnersSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     hero_slider: HeroSliderSelect<false> | HeroSliderSelect<true>;
     partner: PartnerSelect<false> | PartnerSelect<true>;
@@ -96,9 +98,11 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
+    technical_work: TechnicalWork;
     meet: Meet;
   };
   globalsSelect: {
+    technical_work: TechnicalWorkSelect<false> | TechnicalWorkSelect<true>;
     meet: MeetSelect<false> | MeetSelect<true>;
   };
   locale: null;
@@ -160,6 +164,25 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
+  id: number;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_partners".
+ */
+export interface MediaPartner {
   id: number;
   alt: string;
   updatedAt: string;
@@ -283,27 +306,35 @@ export interface Partner {
    */
   slug: string;
   /**
-   * Если выключено — партнер не будет возвращаться в API для публичного доступа
+   * Если выключено — компания не будет возвращаться в API для публичного доступа
    */
   active: boolean;
   /**
-   * Если проверенный — отметить
+   * Если включено — компания будет в ЧС
+   */
+  blacklist: boolean;
+  /**
+   * Если проверенная — отметить
    */
   verified: boolean;
-  logo: number | Media;
+  logo: number | MediaPartner;
   /**
-   * Фото процесса работ партнера (желательно несколько)
+   * Фото процесса работ компании (желательно несколько)
    */
-  gallery: (number | Media)[];
-  /**
-   * Название партнера
-   */
+  gallery?: (number | MediaPartner)[] | null;
   title: string;
   /**
    * Описание партнера (что продает/производит)
    */
   description: string;
+  address?: string | null;
+  /**
+   * Выбрать категории принадлежащие компании
+   */
   categories: (number | PartnerCategory)[];
+  /**
+   * Размер скидки для клубных пользователей
+   */
   discount?:
     | (
         | '5'
@@ -328,6 +359,44 @@ export interface Partner {
         | '100'
       )
     | null;
+  contacts?: {
+    /**
+     * Ссылка на Instagram
+     */
+    instagram?: string | null;
+    /**
+     * Ссылка на Telegram
+     */
+    telegram?: string | null;
+    /**
+     * Ссылка на MAX
+     */
+    max?: string | null;
+    /**
+     * Ссылка на VK
+     */
+    vk?: string | null;
+    phones?:
+      | {
+          phone: string;
+          id?: string | null;
+        }[]
+      | null;
+    emails?:
+      | {
+          email: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Ссылка на сайт компании
+     */
+    site?: string | null;
+    /**
+     * Ссылка на профиль организации в Яндекс Картах
+     */
+    yandexMaps?: string | null;
+  };
   seo?: {
     title?: string | null;
     description?: string | null;
@@ -383,6 +452,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'media_partners';
+        value: number | MediaPartner;
       } | null)
     | ({
         relationTo: 'products';
@@ -485,6 +558,24 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_partners_select".
+ */
+export interface MediaPartnersSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
@@ -546,13 +637,37 @@ export interface HeroSliderSelect<T extends boolean = true> {
 export interface PartnerSelect<T extends boolean = true> {
   slug?: T;
   active?: T;
+  blacklist?: T;
   verified?: T;
   logo?: T;
   gallery?: T;
   title?: T;
   description?: T;
+  address?: T;
   categories?: T;
   discount?: T;
+  contacts?:
+    | T
+    | {
+        instagram?: T;
+        telegram?: T;
+        max?: T;
+        vk?: T;
+        phones?:
+          | T
+          | {
+              phone?: T;
+              id?: T;
+            };
+        emails?:
+          | T
+          | {
+              email?: T;
+              id?: T;
+            };
+        site?: T;
+        yandexMaps?: T;
+      };
   seo?:
     | T
     | {
@@ -614,6 +729,19 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "technical_work".
+ */
+export interface TechnicalWork {
+  id: number;
+  /**
+   * Если выключено — сайт будет недоступен для пользования
+   */
+  active: boolean;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "meet".
  */
 export interface Meet {
@@ -648,6 +776,16 @@ export interface Meet {
   active: boolean;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "technical_work_select".
+ */
+export interface TechnicalWorkSelect<T extends boolean = true> {
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

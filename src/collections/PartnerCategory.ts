@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import  { CollectionConfig, headersWithCors } from 'payload'
 import { slugify } from '@/lib/generateSlug'
 
 export const PartnerCategory: CollectionConfig = {
@@ -47,6 +47,36 @@ export const PartnerCategory: CollectionConfig = {
         description: 'Автоматически генерируется из названия',
         readOnly: true,
         hidden: true,
+      },
+    },
+  ],
+  endpoints: [
+    {
+      path: '/c',
+      method: 'get',
+      handler: async (req) => {
+        const categories = await req.payload.find({
+          collection: 'partner_category',
+          select: {
+            updatedAt: false,
+            createdAt: false,
+          },
+          depth: 1,
+          sort: 'title',
+        })
+
+        return Response.json(
+          {
+            categories: categories.docs,
+          },
+          {
+            status: 200,
+            headers: headersWithCors({
+              headers: new Headers(),
+              req,
+            }),
+          },
+        )
       },
     },
   ],

@@ -14,6 +14,8 @@ import { Partner } from '@/collections/Partner'
 import { PartnerCategory } from '@/collections/PartnerCategory'
 import { en } from '@payloadcms/translations/languages/en'
 import { ru } from '@payloadcms/translations/languages/ru'
+import { MediaPartners } from '@/collections/MediaPartners'
+import { TechnicalWork } from '@/globals/TechnicalWork/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,8 +33,8 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Products, HeroSlider, Partner, PartnerCategory],
-  globals: [Meet],
+  collections: [Users, Media, MediaPartners, Products, HeroSlider, Partner, PartnerCategory],
+  globals: [TechnicalWork, Meet],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
