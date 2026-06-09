@@ -139,7 +139,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  name: string;
+  name?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
