@@ -15,7 +15,7 @@ export const Users: CollectionConfig = {
       name: 'name',
       label: 'Имя',
       type: 'text',
-      defaultValue: '',
+      defaultValue: 'user',
       required: true,
     },
   ],
