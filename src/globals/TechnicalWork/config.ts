@@ -29,10 +29,20 @@ export const TechnicalWork: GlobalConfig = {
           depth: 2,
         })
 
+        if (!data.active) {
+          return Response.json({status: false}, {
+            status: 500,
+            headers: headersWithCors({
+              headers: new Headers(),
+              req,
+            }),
+          })
+        }
+
         return Response.json(
-          data.active,
+          {status: data.active},
           {
-            status: 404,
+            status: 200,
             headers: headersWithCors({
               headers: new Headers(),
               req,
