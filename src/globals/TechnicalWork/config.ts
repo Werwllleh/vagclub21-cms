@@ -29,26 +29,29 @@ export const TechnicalWork: GlobalConfig = {
           depth: 2,
         })
 
-        if (!data.active) {
-          return Response.json({status: false}, {
-            status: 500,
-            headers: headersWithCors({
-              headers: new Headers(),
-              req,
-            }),
-          })
+        if (data.active) {
+          return Response.json(
+            { status: data.active },
+            {
+              status: 200,
+              headers: headersWithCors({
+                headers: new Headers(),
+                req,
+              }),
+            },
+          )
+        } else {
+          return Response.json(
+            {},
+            {
+              status: 500,
+              headers: headersWithCors({
+                headers: new Headers(),
+                req,
+              }),
+            },
+          )
         }
-
-        return Response.json(
-          {status: data.active},
-          {
-            status: 200,
-            headers: headersWithCors({
-              headers: new Headers(),
-              req,
-            }),
-          },
-        )
       },
     },
   ],
