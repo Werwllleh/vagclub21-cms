@@ -260,6 +260,8 @@ export const Partner: CollectionConfig = {
         const pageParam = Number(url.searchParams.get('page'))
         const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1
 
+        const limit = Number(url.searchParams.get('limit'))
+
         const verified = url.searchParams.get('verified') === 'true'
         const blockedStatus = url.searchParams.get('blacklist') === 'true'
         const categoriesParams = url.searchParams.get('categories')
@@ -285,6 +287,10 @@ export const Partner: CollectionConfig = {
         if (!!categorySlugs.length) {
           const foundCategories = await req.payload.find({
             collection: 'partner_category',
+            select: {
+              updatedAt: false,
+              createdAt: false,
+            },
             where: {
               slug: {
                 in: categorySlugs,
@@ -312,7 +318,7 @@ export const Partner: CollectionConfig = {
           },
           depth: 1,
           page,
-          limit: 1,
+          limit: limit,
           sort: '-createdAt',
         })
 
@@ -336,7 +342,7 @@ export const Partner: CollectionConfig = {
 
     // GET /api/partner/c/:slug
     {
-      path: '/c:slug',
+      path: '/c/:slug',
       method: 'get',
       handler: async (req) => {
         const slug = req.routeParams?.slug as string | undefined
