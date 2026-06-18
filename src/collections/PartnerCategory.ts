@@ -61,6 +61,7 @@ export const PartnerCategory: CollectionConfig = {
             updatedAt: false,
             createdAt: false,
           },
+          limit: 0,
           depth: 1,
           sort: 'title',
         })
