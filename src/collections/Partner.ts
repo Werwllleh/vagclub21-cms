@@ -186,6 +186,14 @@ export const Partner: CollectionConfig = {
           },
         },
         {
+          name: 'avito',
+          label: 'Avito',
+          type: 'text',
+          admin: {
+            description: 'Ссылка на профиль Avito',
+          },
+        },
+        {
           name: 'phones',
           label: 'Телефоны',
           type: 'array',

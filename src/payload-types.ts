@@ -379,6 +379,10 @@ export interface Partner {
      * Ссылка на VK
      */
     vk?: string | null;
+    /**
+     * Ссылка на профиль Avito
+     */
+    avito?: string | null;
     phones?:
       | {
           phone: string;
@@ -665,6 +669,7 @@ export interface PartnerSelect<T extends boolean = true> {
         telegram?: T;
         max?: T;
         vk?: T;
+        avito?: T;
         phones?:
           | T
           | {
