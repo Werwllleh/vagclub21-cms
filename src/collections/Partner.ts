@@ -76,7 +76,6 @@ export const Partner: CollectionConfig = {
       label: 'Логотип компании',
       type: 'relationship',
       relationTo: 'media_partners',
-      required: true,
     },
     {
       name: 'gallery',
@@ -231,6 +230,16 @@ export const Partner: CollectionConfig = {
       ],
     },
     {
+      name: 'sort',
+      label: 'Сортировка',
+      type: 'number',
+      required: true,
+      defaultValue: 100,
+      admin: {
+        description: 'Сортировка компаний',
+      },
+    },
+    {
       type: 'group',
       name: 'seo',
       label: 'SEO (meta)',
@@ -249,7 +258,7 @@ export const Partner: CollectionConfig = {
     },
   ],
   endpoints: [
-    // GET /api/partner/c?page=1&verified=true&categories=avtoservis,chip-tyuning
+    // GET /api/partner/c?page=1&verified=true&category=avtoservis,chip-tyuning
     {
       path: '/c',
       method: 'get',
@@ -264,7 +273,7 @@ export const Partner: CollectionConfig = {
 
         const verified = url.searchParams.get('verified') === 'true'
         const blockedStatus = url.searchParams.get('blacklist') === 'true'
-        const categoriesParams = url.searchParams.get('categories')
+        const categoriesParams = url.searchParams.get('category')
         const categorySlugs = categoriesParams?.split(',') || []
 
         const where: any = {
@@ -319,7 +328,7 @@ export const Partner: CollectionConfig = {
           depth: 1,
           page,
           limit: limit,
-          sort: '-createdAt',
+          sort: 'sort',
         })
 
         return Response.json(

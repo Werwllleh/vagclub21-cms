@@ -25,8 +25,24 @@ export const HeroSlider: CollectionConfig = {
     },
     {
       name: 'detail_link',
-      label: 'Ссылка',
-      type: 'text',
+      label: 'Кнопка-переход',
+      type: 'group',
+      fields: [
+        {
+          name: 'title',
+          label: 'Текст кнопки',
+          type: 'text',
+          defaultValue: 'Подробнее',
+          required: true,
+        },
+        {
+          name: 'url',
+          label: 'Ссылка (куда ведет)',
+          type: 'text',
+          defaultValue: '#',
+          required: true,
+        },
+      ],
     },
     {
       name: 'active',

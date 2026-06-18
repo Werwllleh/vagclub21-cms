@@ -286,7 +286,10 @@ export interface HeroSlider {
     };
     [k: string]: unknown;
   } | null;
-  detail_link?: string | null;
+  detail_link: {
+    title: string;
+    url: string;
+  };
   /**
    * Если выключено — товар не будет возвращаться в API для публичного доступа
    */
@@ -317,7 +320,7 @@ export interface Partner {
    * Если проверенная — отметить
    */
   verified: boolean;
-  logo: number | MediaPartner;
+  logo?: (number | null) | MediaPartner;
   /**
    * Фото процесса работ компании (желательно несколько)
    */
@@ -397,6 +400,10 @@ export interface Partner {
      */
     yandexMaps?: string | null;
   };
+  /**
+   * Сортировка компаний
+   */
+  sort: number;
   seo?: {
     title?: string | null;
     description?: string | null;
@@ -624,7 +631,12 @@ export interface ProductsSelect<T extends boolean = true> {
 export interface HeroSliderSelect<T extends boolean = true> {
   title?: T;
   description?: T;
-  detail_link?: T;
+  detail_link?:
+    | T
+    | {
+        title?: T;
+        url?: T;
+      };
   active?: T;
   bg_image?: T;
   updatedAt?: T;
@@ -668,6 +680,7 @@ export interface PartnerSelect<T extends boolean = true> {
         site?: T;
         yandexMaps?: T;
       };
+  sort?: T;
   seo?:
     | T
     | {
