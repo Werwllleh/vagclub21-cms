@@ -16,6 +16,7 @@ import { en } from '@payloadcms/translations/languages/en'
 import { ru } from '@payloadcms/translations/languages/ru'
 import { MediaPartners } from '@/collections/MediaPartners'
 import { TechnicalWork } from '@/globals/TechnicalWork/config'
+import {Policy} from "@/globals/Policy/config";
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -34,7 +35,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, MediaPartners, Products, HeroSlider, Partner, PartnerCategory],
-  globals: [TechnicalWork, Meet],
+  globals: [TechnicalWork, Meet, Policy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

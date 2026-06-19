@@ -100,10 +100,12 @@ export interface Config {
   globals: {
     technical_work: TechnicalWork;
     meet: Meet;
+    policy: Policy;
   };
   globalsSelect: {
     technical_work: TechnicalWorkSelect<false> | TechnicalWorkSelect<true>;
     meet: MeetSelect<false> | MeetSelect<true>;
+    policy: PolicySelect<false> | PolicySelect<true>;
   };
   locale: null;
   widgets: {
@@ -797,6 +799,30 @@ export interface Meet {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policy".
+ */
+export interface Policy {
+  id: number;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "technical_work_select".
  */
 export interface TechnicalWorkSelect<T extends boolean = true> {
@@ -823,6 +849,16 @@ export interface MeetSelect<T extends boolean = true> {
   date?: T;
   date_tz?: T;
   active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policy_select".
+ */
+export interface PolicySelect<T extends boolean = true> {
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
