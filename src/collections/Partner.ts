@@ -238,6 +238,23 @@ export const Partner: CollectionConfig = {
       ],
     },
     {
+      name: 'coordinates',
+      label: 'Координаты организации',
+      type: 'group',
+      fields: [
+        {
+          name: 'lat',
+          label: 'Широта',
+          type: 'number',
+        },
+        {
+          name: 'lng',
+          label: 'Долгота',
+          type: 'number',
+        },
+      ],
+    },
+    {
       name: 'sort',
       label: 'Сортировка',
       type: 'number',
@@ -290,7 +307,7 @@ export const Partner: CollectionConfig = {
           },
           blacklist: {
             equals: blockedStatus,
-          }
+          },
         }
 
         if (verified) {

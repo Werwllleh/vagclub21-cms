@@ -406,6 +406,10 @@ export interface Partner {
      */
     yandexMaps?: string | null;
   };
+  coordinates?: {
+    lat?: number | null;
+    lng?: number | null;
+  };
   /**
    * Сортировка компаний
    */
@@ -686,6 +690,12 @@ export interface PartnerSelect<T extends boolean = true> {
             };
         site?: T;
         yandexMaps?: T;
+      };
+  coordinates?:
+    | T
+    | {
+        lat?: T;
+        lng?: T;
       };
   sort?: T;
   seo?:
