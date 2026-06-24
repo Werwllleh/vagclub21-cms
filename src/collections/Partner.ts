@@ -408,5 +408,50 @@ export const Partner: CollectionConfig = {
         return Response.json(partner, { status: 200 })
       },
     },
+
+    // GET /api/partner/labels
+    {
+      path: '/labels',
+      method: 'get',
+      handler: async (req) => {
+
+        const result = await req.payload.find({
+          collection: 'partner',
+          where: {
+            and: [
+              { active: { equals: true }},
+              { logo: { exists: true }},
+              { blacklist: { equals: false }}
+            ],
+          },
+          select: {
+            address: false,
+            blacklist: false,
+            categories: false,
+            contacts: false,
+            coordinates: false,
+            description: false,
+            discount: false,
+            gallery: false,
+            seo: false,
+            verified: false,
+            active: false,
+            updatedAt: false,
+            createdAt: false,
+          },
+          pagination: false,
+          depth: 1,
+          sort: 'sort',
+        })
+
+        const list = result.docs
+
+        if (!list.length) {
+          return Response.json({ message: 'Компании не найдены' }, { status: 404 })
+        }
+
+        return Response.json(list, { status: 200 })
+      },
+    },
   ],
 }
