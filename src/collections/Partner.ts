@@ -1,7 +1,6 @@
-import { CollectionConfig, headersWithCors } from 'payload'
-import { slugify } from '@/lib/generateSlug'
-import { types } from 'sass'
-import Boolean = types.Boolean
+import {CollectionConfig, headersWithCors} from 'payload'
+import {slugify} from '@/lib/generateSlug'
+import { sql } from 'drizzle-orm'
 
 export const Partner: CollectionConfig = {
   slug: 'partner',
@@ -9,13 +8,13 @@ export const Partner: CollectionConfig = {
     singular: 'Партнер',
     plural: 'Партнеры',
   },
-  access: { read: () => true },
+  access: {read: () => true},
   admin: {
     useAsTitle: 'title',
   },
   hooks: {
     beforeValidate: [
-      ({ data }) => {
+      ({data}) => {
         if (!data) return data
 
         if (data.title && !data.slug) {
@@ -123,26 +122,26 @@ export const Partner: CollectionConfig = {
       label: 'Размер скидки',
       type: 'select',
       options: [
-        { label: '5', value: '5' },
-        { label: '10', value: '10' },
-        { label: '15', value: '15' },
-        { label: '20', value: '20' },
-        { label: '25', value: '25' },
-        { label: '30', value: '30' },
-        { label: '35', value: '35' },
-        { label: '40', value: '40' },
-        { label: '45', value: '45' },
-        { label: '50', value: '50' },
-        { label: '55', value: '55' },
-        { label: '60', value: '60' },
-        { label: '65', value: '65' },
-        { label: '70', value: '70' },
-        { label: '75', value: '75' },
-        { label: '80', value: '80' },
-        { label: '85', value: '85' },
-        { label: '90', value: '90' },
-        { label: '95', value: '95' },
-        { label: '100', value: '100' },
+        {label: '5', value: '5'},
+        {label: '10', value: '10'},
+        {label: '15', value: '15'},
+        {label: '20', value: '20'},
+        {label: '25', value: '25'},
+        {label: '30', value: '30'},
+        {label: '35', value: '35'},
+        {label: '40', value: '40'},
+        {label: '45', value: '45'},
+        {label: '50', value: '50'},
+        {label: '55', value: '55'},
+        {label: '60', value: '60'},
+        {label: '65', value: '65'},
+        {label: '70', value: '70'},
+        {label: '75', value: '75'},
+        {label: '80', value: '80'},
+        {label: '85', value: '85'},
+        {label: '90', value: '90'},
+        {label: '95', value: '95'},
+        {label: '100', value: '100'},
       ],
       admin: {
         description: 'Размер скидки для клубных пользователей',
@@ -283,7 +282,7 @@ export const Partner: CollectionConfig = {
     },
   ],
   endpoints: [
-    // GET /api/partner/c?page=1&verified=true&category=avtoservis,chip-tyuning
+    // GET /api/partner/c?page=1&verified=true&categories=avtoservis,chip-tyuning
     {
       path: '/c',
       method: 'get',
@@ -294,12 +293,38 @@ export const Partner: CollectionConfig = {
         const pageParam = Number(url.searchParams.get('page'))
         const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1
 
-        const limit = Number(url.searchParams.get('limit'))
+        const limitParam = Number(url.searchParams.get('limit'))
+        const limit = Number.isFinite(limitParam) && limitParam > 0 ? limitParam : 10
 
         const verified = url.searchParams.get('verified') === 'true'
         const blockedStatus = url.searchParams.get('blacklist') === 'true'
-        const categoriesParams = url.searchParams.get('category')
-        const categorySlugs = categoriesParams?.split(',') || []
+
+        const categoriesParams = url.searchParams.get('categories')
+
+        const categorySlugs = (categoriesParams ?? '')
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0)
+
+        let categoryIds: number[] = []
+
+        if (categorySlugs.length > 0) {
+          const foundCategories = await req.payload.find({
+            collection: 'partner_category',
+            select: {
+              updatedAt: false,
+              createdAt: false,
+            },
+            where: {
+              slug: {
+                in: categorySlugs,
+              },
+            },
+            limit: 0,
+          })
+
+          categoryIds = foundCategories.docs.map((item) => Number(item.id))
+        }
 
         const where: any = {
           active: {
@@ -316,28 +341,44 @@ export const Partner: CollectionConfig = {
           }
         }
 
-        let categoryIds: number[] = []
+        if (categoryIds.length > 0) {
+          const categoryIdChunks = categoryIds.map((id) => sql`${id}`)
 
-        if (!!categorySlugs.length) {
-          const foundCategories = await req.payload.find({
-            collection: 'partner_category',
-            select: {
-              updatedAt: false,
-              createdAt: false,
-            },
-            where: {
-              slug: {
-                in: categorySlugs,
+          const matchedPartnersResult = await req.payload.db.drizzle.execute<{
+            id: number
+          }>(sql`
+              SELECT p.id
+              FROM partner p
+                       INNER JOIN partner_rels pr
+                                  ON pr.parent_id = p.id
+              WHERE pr.path = 'categories'
+                AND pr.partner_category_id IN (${sql.join(categoryIdChunks, sql`, `)})
+              GROUP BY p.id
+              HAVING COUNT(DISTINCT pr.partner_category_id) = ${categoryIds.length}
+          `)
+
+          const matchedPartnerIds = matchedPartnersResult.rows.map((row) => row.id)
+
+          if (!matchedPartnerIds.length) {
+            return Response.json(
+              {
+                partners: [],
+                hasNextPage: false,
+                totalPages: 0,
+                totalCount: 0,
               },
-            },
-          })
+              {
+                status: 200,
+                headers: headersWithCors({
+                  headers: new Headers(),
+                  req,
+                }),
+              },
+            )
+          }
 
-          categoryIds = foundCategories.docs.map((item) => item.id)
-        }
-
-        if (categoryIds.length) {
-          where.categories = {
-            in: categoryIds,
+          where.id = {
+            in: matchedPartnerIds,
           }
         }
 
@@ -352,7 +393,7 @@ export const Partner: CollectionConfig = {
           },
           depth: 1,
           page,
-          limit: limit,
+          limit,
           sort: 'sort',
         })
 
@@ -382,13 +423,13 @@ export const Partner: CollectionConfig = {
         const slug = req.routeParams?.slug as string | undefined
 
         if (!slug) {
-          return Response.json({ message: 'Slug обязателен' }, { status: 400 })
+          return Response.json({message: 'Slug обязателен'}, {status: 400})
         }
 
         const result = await req.payload.find({
           collection: 'partner',
           where: {
-            and: [{ slug: { equals: slug } }, { active: { equals: true } }],
+            and: [{slug: {equals: slug}}, {active: {equals: true}}],
           },
           select: {
             active: false,
@@ -402,10 +443,10 @@ export const Partner: CollectionConfig = {
         const partner = result.docs[0]
 
         if (!partner) {
-          return Response.json({ message: 'Компания не найдена' }, { status: 404 })
+          return Response.json({message: 'Компания не найдена'}, {status: 404})
         }
 
-        return Response.json(partner, { status: 200 })
+        return Response.json(partner, {status: 200})
       },
     },
 
@@ -419,9 +460,9 @@ export const Partner: CollectionConfig = {
           collection: 'partner',
           where: {
             and: [
-              { active: { equals: true }},
-              { logo: { exists: true }},
-              { blacklist: { equals: false }}
+              {active: {equals: true}},
+              {logo: {exists: true}},
+              {blacklist: {equals: false}}
             ],
           },
           select: {
@@ -447,10 +488,10 @@ export const Partner: CollectionConfig = {
         const list = result.docs
 
         if (!list.length) {
-          return Response.json({ message: 'Компании не найдены' }, { status: 404 })
+          return Response.json({message: 'Компании не найдены'}, {status: 404})
         }
 
-        return Response.json(list, { status: 200 })
+        return Response.json(list, {status: 200})
       },
     },
   ],
