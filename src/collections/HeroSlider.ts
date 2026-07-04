@@ -13,6 +13,16 @@ export const HeroSlider: CollectionConfig = {
   hooks: {},
   fields: [
     {
+      name: 'sort',
+      label: 'Сортировка',
+      type: 'number',
+      required: true,
+      defaultValue: 100,
+      admin: {
+        description: 'Сортировка слайдов',
+      },
+    },
+    {
       name: 'title',
       label: 'Title слайда',
       type: 'text',
@@ -76,7 +86,7 @@ export const HeroSlider: CollectionConfig = {
           collection: 'hero_slider',
           where,
           depth: 2,
-          sort: '-createdAt',
+          sort: 'sort',
         })
 
         return Response.json(

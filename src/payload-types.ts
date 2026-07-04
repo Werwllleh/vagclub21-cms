@@ -272,6 +272,10 @@ export interface Product {
  */
 export interface HeroSlider {
   id: number;
+  /**
+   * Сортировка слайдов
+   */
+  sort: number;
   title: string;
   description?: {
     root: {
@@ -639,6 +643,7 @@ export interface ProductsSelect<T extends boolean = true> {
  * via the `definition` "hero_slider_select".
  */
 export interface HeroSliderSelect<T extends boolean = true> {
+  sort?: T;
   title?: T;
   description?: T;
   detail_link?:
