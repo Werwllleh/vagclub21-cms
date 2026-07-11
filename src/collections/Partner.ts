@@ -8,20 +8,23 @@ export const Partner: CollectionConfig = {
     singular: 'Партнер',
     plural: 'Партнеры',
   },
-  access: {read: () => true},
+  access: {
+    read: () => true,
+    create: () => true,
+  },
   admin: {
     useAsTitle: 'title',
   },
   hooks: {
     beforeValidate: [
       ({data}) => {
-        if (!data) return data
+        if (!data) return data;
 
         if (data.title && !data.slug) {
-          data.slug = slugify(String(data.title))
+          data.slug = slugify(String(data.title));
         }
 
-        return data
+        return data;
       },
     ],
   },
