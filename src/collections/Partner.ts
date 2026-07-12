@@ -11,6 +11,7 @@ export const Partner: CollectionConfig = {
   access: {
     read: () => true,
     create: () => true,
+    update: () => true,
   },
   admin: {
     useAsTitle: 'title',
@@ -438,6 +439,7 @@ export const Partner: CollectionConfig = {
             active: false,
             updatedAt: false,
             createdAt: false,
+            sort: false,
           },
           limit: 1,
           depth: 1,
