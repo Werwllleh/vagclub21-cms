@@ -25,6 +25,16 @@ export const Partner: CollectionConfig = {
           data.slug = slugify(String(data.title));
         }
 
+        if (data.active && data.on_check) {
+          data.active = false;
+          data.on_check = true;
+        }
+
+        if (data.blacklist) {
+          data.active = false;
+          data.on_check = false;
+        }
+
         return data;
       },
     ],
@@ -39,6 +49,17 @@ export const Partner: CollectionConfig = {
       index: true,
       admin: {
         description: 'Оставь пустым — сгенерируется из названия',
+      },
+    },
+    {
+      name: 'on_check',
+      label: 'На проверке',
+      type: 'checkbox',
+      defaultValue: false,
+      required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Поставить статус компании "на проверке"',
       },
     },
     {
@@ -331,6 +352,9 @@ export const Partner: CollectionConfig = {
         }
 
         const where: any = {
+          on_check: {
+            equals: false,
+          },
           active: {
             equals: true,
           },

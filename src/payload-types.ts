@@ -315,6 +315,10 @@ export interface Partner {
    */
   slug: string;
   /**
+   * Поставить статус компании "на проверке"
+   */
+  on_check: boolean;
+  /**
    * Если выключено — компания не будет возвращаться в API для публичного доступа
    */
   active: boolean;
@@ -663,6 +667,7 @@ export interface HeroSliderSelect<T extends boolean = true> {
  */
 export interface PartnerSelect<T extends boolean = true> {
   slug?: T;
+  on_check?: T;
   active?: T;
   blacklist?: T;
   verified?: T;
