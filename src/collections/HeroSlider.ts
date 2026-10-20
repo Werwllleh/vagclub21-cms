@@ -67,10 +67,23 @@ export const HeroSlider: CollectionConfig = {
     },
     {
       name: 'bg_image',
-      label: 'Фоновое фото',
+      label: 'Фоновое фото (Десктоп)',
       type: 'relationship',
       relationTo: 'media',
       required: true,
+      admin: {
+        description: 'Горизонтальное фото для десктопов и планшетов (рекомендуется 1920x1080 или 16:9)',
+      },
+    },
+    {
+      name: 'bg_image_mobile',
+      label: 'Фоновое фото (Мобильное, вертикальное)',
+      type: 'relationship',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Вертикальное фото для смартфонов (рекомендуется 9:16 или 3:4). Если не задано — будет использовано десктопное.',
+      },
     },
   ],
   endpoints: [
